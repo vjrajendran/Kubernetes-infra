@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ollama
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://otwld.github.io/ollama-helm/
+    chart: ollama
+    targetRevision: 1.3.0
+    helm:
+      values: |
+        ollama:
+          models:
+            pull:
+              - mistral        # pulls mistral 7B on startup (~4GB)
+          gpu:
+            enabled: false     # set true only if you have GPU nodes
+        resources:
+          requests:
+            memory: "4Gi"
+            cpu: "1"
+          limits:
+            memory: "6Gi"
+            cpu: "2"
+        service:
+          type: ClusterIP
+          port: 11434
+        persistentVolume:
+          enabled: true
+          size: 30Gi           # stores downloaded models
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ollama
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

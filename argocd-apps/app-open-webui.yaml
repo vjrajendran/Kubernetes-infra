@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: open-webui
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://helm.openwebui.com/
+    chart: open-webui
+    targetRevision: 6.0.0
+    helm:
+      values: |
+        ollama:
+          enabled: false       # we use our own Ollama, not the bundled one
+
+        ollamaUrls:
+          - http://ollama.ollama.svc.cluster.local:11434  # points to our Ollama
+
+        persistence:
+          enabled: true
+          size: 5Gi            # stores chat history, users, settings
+
+        service:
+          type: ClusterIP
+          port: 80
+
+        # Uncomment and fill in if you want a domain via Traefik
+        # ingress:
+        #   enabled: true
+        #   class: traefik
+        #   host: chat.yourdomain.com
+        #   tls: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: open-webui
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
