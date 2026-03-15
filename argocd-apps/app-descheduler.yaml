@@ -11,7 +11,7 @@ spec:
     path: custom-charts/descheduler
   destination:
     server: https://kubernetes.default.svc
-    namespace: kube-system
+    namespace: descheduler
   syncPolicy:
     automated:
       prune: true
