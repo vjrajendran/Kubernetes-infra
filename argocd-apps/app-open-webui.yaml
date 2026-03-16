@@ -25,12 +25,16 @@ spec:
           type: ClusterIP
           port: 80
 
-        # Uncomment and fill in if you want a domain via Traefik
-        # ingress:
-        #   enabled: true
-        #   class: traefik
-        #   host: chat.yourdomain.com
-        #   tls: true
+        ingress:
+          enabled: true
+          class: traefik
+          annotations:
+            cert-manager.io/cluster-issuer: "letsencrypt-prod"
+            traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+            traefik.ingress.kubernetes.io/router.tls: "true"
+          host: chat.tecminal.com
+          tls: true
+          existingSecret: "open-webui-tls"
   destination:
     server: https://kubernetes.default.svc
     namespace: open-webui
