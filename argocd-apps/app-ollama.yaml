@@ -14,7 +14,7 @@ spec:
         ollama:
           models:
             pull:
-              - mistral        # pulls mistral 7B on startup (~4GB)
+              - phi3        # pulls phi3 on startup (~4GB)
           gpu:
             enabled: false     # set true only if you have GPU nodes
         resources:
